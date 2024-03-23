@@ -1,3 +1,17 @@
+<script setup lang="ts">
+import { defineProps } from 'vue'
+import { type IItem } from './types.ts'
+
+interface IProps extends IItem {
+    isFavorite: Boolean
+    isAdded: Boolean
+    onAdd: Function
+    onFavorite: Function
+}
+
+defineProps<IProps>()
+</script>
+
 <template>
     <div
         class="relative bg-white border border-slate-100 rounded-3xl p-8 cursor-pointer transition hover:-translate-y-2 hover:shadow-xl">
@@ -19,5 +33,3 @@
         </div>
     </div>
 </template>
-
-<script src="./card.ts" lang="ts"></script>

@@ -1,7 +1,23 @@
-<script setup>
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
 import Header from './components/Header/Header.vue'
 import CardList from './components/Card/CardList.vue'
+import { type TItems } from './components/Card/types.ts'
 import Drawer from './components/Drawer/Drawer.vue'
+import axios from 'axios'
+
+const items = ref<TItems>([])
+
+onMounted(async () => {
+    try {
+        const { data } = await axios.get('https://bb50be424c3a9a73.mokky.dev/items')
+
+        items.value = data as TItems
+    } catch (error) {
+        console.error(error)
+    }
+})
+
 </script>
 
 <template>
@@ -28,7 +44,11 @@ import Drawer from './components/Drawer/Drawer.vue'
                     </div>
                 </div>
             </div>
-            <CardList />
+
+
+            <div class="mt-10">
+                <CardList :items="items" />
+            </div>
         </div>
     </div>
 </template>
