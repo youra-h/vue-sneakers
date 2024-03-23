@@ -4,9 +4,7 @@ import Card from '@/components/Card/Card.vue'
 
 <template>
     <div class="grid grid-cols-4 gap-5">
-        <Card />
-        <Card />
-        <Card />
-        <Card />
+        <Card image-url="/sneakers/sneakers-1.jpg" title="Мужские кроссовки" :price="45345"
+            :onAdd="() => console.log('qwe')" />
     </div>
 </template>
