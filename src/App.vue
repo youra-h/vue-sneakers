@@ -1,49 +1,20 @@
 <script setup lang="ts">
-import { onMounted, ref, watch, reactive } from 'vue'
+import { onMounted } from 'vue'
+import { useStore } from './store'
 import Header from './components/Header/Header.vue'
 import CardList from './components/Card/CardList.vue'
-import { type TItems } from './components/Card/types.ts'
 import Drawer from './components/Drawer/Drawer.vue'
-import axios from 'axios'
-import { type IFilters, Search, debounce } from './types.ts'
+import { debounce } from './types.ts'
 
-const items = ref<TItems>([])
+const store = useStore()
 
-const filters: IFilters = reactive({
-    sortBy: 'title',
-    search: new Search
+onMounted(() => {
+    store.dispatch('fetchItems')
 })
 
-const fetchItems = async () => {
-    try {
-        const params: { title?: string, sortBy?: string } = {};
-
-        if (filters.search.value) {
-            params.title = filters.search;
-        }
-
-        if (filters.sortBy) {
-            params.sortBy = filters.sortBy;
-        }
-
-        const { data } = await axios.get('https://bb50be424c3a9a73.mokky.dev/items', {
-            params
-        })
-
-        items.value = data as TItems
-    } catch (error) {
-        console.error(error)
-    }
-}
-
-onMounted(fetchItems)
-
-watch(filters, fetchItems)
-
 const updateSearch = debounce((value: string) => {
-    filters.search.value = value
+    store.dispatch('updateSearch', value)
 }, 500)
-
 </script>
 
 <template>
@@ -57,8 +28,8 @@ const updateSearch = debounce((value: string) => {
                 <h2 class="text-3xl font-bold">Все кроссовки</h2>
 
                 <div class="flex gap-4">
-                    <select v-model="filters.sortBy" class="py-2 px-3 border border-slate-200 rounded-md outline-none"
-                        name="" id="">
+                    <select v-model="store.getters.filters.sortBy"
+                        class="py-2 px-3 border border-slate-200 rounded-md outline-none" name="" id="">
                         <option value="title">По названию</option>
                         <option value="price">По цене (дешевые)</option>
                         <option value="-price">По цене (дорогие)</option>
@@ -74,7 +45,7 @@ const updateSearch = debounce((value: string) => {
 
 
             <div class="mt-10">
-                <CardList :items="items" />
+                <CardList :items="store.getters.items" />
             </div>
         </div>
     </div>
