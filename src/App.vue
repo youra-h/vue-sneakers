@@ -5,7 +5,7 @@ import CardList from './components/Card/CardList.vue'
 import { type TItems } from './components/Card/types.ts'
 import Drawer from './components/Drawer/Drawer.vue'
 import axios from 'axios'
-import { type IFilters, Search } from './types.ts'
+import { type IFilters, Search, debounce } from './types.ts'
 
 const items = ref<TItems>([])
 
@@ -40,6 +40,10 @@ onMounted(fetchItems)
 
 watch(filters, fetchItems)
 
+const updateSearch = debounce((value: string) => {
+    filters.search.value = value
+}, 500)
+
 </script>
 
 <template>
@@ -62,7 +66,7 @@ watch(filters, fetchItems)
 
                     <div class="relative">
                         <img class="absolute left-3 top-3" src="/search.svg" alt="Search">
-                        <input type="text" v-model="filters.search.value" placeholder="Поиск..."
+                        <input type="text" @input="updateSearch($event.target.value)" placeholder="Поиск..."
                             class="border border-slate-200 rounded-md py-2 pl-10 pr-4 outline-none focus:border-slate-400" />
                     </div>
                 </div>
