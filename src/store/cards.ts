@@ -2,9 +2,9 @@
 import { type InjectionKey } from 'vue'
 import { createStore, useStore as baseUseStore, Store } from 'vuex'
 import axios from 'axios'
-import { debounce } from './../types.ts'
-import { type TItems, type IItem } from './../components/Card/types.ts'
-import { type IFilters, Search } from './../types.ts'
+import { debounce } from './../types.js'
+import { type TItems, type IItem } from './../components/Card/types.js'
+import { type IFilters, Search } from './../types.js'
 
 export interface State {
   items: TItems

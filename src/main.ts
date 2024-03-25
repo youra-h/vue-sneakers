@@ -1,5 +1,5 @@
 import './assets/main.css'
-import { store, key } from './store'
+import { store, key } from './store/cards'
 
 import { createApp } from 'vue'
 import App from './App.vue'

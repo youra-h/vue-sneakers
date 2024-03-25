@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { useStore } from './store'
+import { useStore } from './store/cards'
 import Header from './components/Header/Header.vue'
 import CardList from './components/Card/CardList.vue'
 import Drawer from './components/Drawer/Drawer.vue'
@@ -50,3 +50,4 @@ const updateSearch = debounce((value: string) => {
         </div>
     </div>
 </template>
+./store/cards
