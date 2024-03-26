@@ -1,8 +1,6 @@
-// store.ts
 import { type InjectionKey } from 'vue'
-import { createStore, useStore as baseUseStore, Store } from 'vuex'
+import { createStore, type Dispatch, type Commit, Store, useStore as baseUseStore } from 'vuex'
 import axios from 'axios'
-import { debounce } from './../types.js'
 import { type TItems, type IItem } from './../components/Card/types.js'
 import { type IFilters, Search } from './../types.js'
 
@@ -22,17 +20,16 @@ const state: State = {
 }
 
 const getters = {
-  items: (state) => state.items,
-  filters: (state) => state.filters
+  items: (state: State) => state.items,
+  filters: (state: State) => state.filters
 }
 
 const mutations = {
-  setItems(state, items: TItems) {
+  setItems(state: State, items: TItems) {
     state.items = items
   },
-  setFilters(state, filters: IFilters) {
+  setFilters(state: State, filters: IFilters) {
     state.filters = filters
-    this.dispatch('fetchItems')
   }
 }
 
@@ -49,47 +46,45 @@ const fetchFavorites = async () => {
 }
 
 const actions = {
-  async fetchItems({ commit, state }) {
+  async fetchItems({ commit, state }: { commit: Commit; state: State }) {
     try {
       const params: { title?: string; sortBy?: string } = {}
-
       if (state.filters.search.value) {
-        params.title = state.filters.search
+        params.title = state.filters.search.toString()
       }
-
       if (state.filters.sortBy) {
         params.sortBy = state.filters.sortBy
       }
-
       const { data } = await axios.get('https://bb50be424c3a9a73.mokky.dev/items', {
         params
       })
-
       const favorites = await fetchFavorites()
-
       const items = (data as TItems).map((item: IItem) => {
         return {
-          ...item,
-          isFavorite: favorites.some((favorite: IItem) => favorite.id === item.id),
-          isAdded: false,
-          onAdd: () => {
-            console.log('Add to cart', item.id)
-          },
-          onFavorite: () => {
-            console.log('Add to favorites', item.id)
-          }
+          ...item
+          // isFavorite: favorites.some((favorite: IItem) => favorite.id === item.id)
+          // isAdded: false,
+          // onAdd: () => {
+          //   console.log('Add to cart', item.id)
+          // },
+          // onFavorite: () => {
+          //   console.log('Add to favorites', item.id)
+          // }
         }
       })
-
       commit('setItems', items)
     } catch (error) {
       console.error(error)
     }
   },
-  updateSearch({ commit }, value: string) {
-    const newFilters = { ...this.state.filters }
+  updateSearch(
+    { commit, state, dispatch }: { commit: Commit; state: State; dispatch: Dispatch },
+    value: string
+  ) {
+    const newFilters = { ...state.filters }
     newFilters.search.value = value
     commit('setFilters', newFilters)
+    dispatch('fetchItems')
   }
 }
 

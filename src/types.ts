@@ -23,9 +23,9 @@ export interface IFilters {
   search: Search
 }
 
-export function debounce(fn: (...args: any[]) => void, delay: number) {
+export function debounce<T>(this: T, fn: (this: T, ...args: any[]) => void, delay: number) {
   let timeoutID: number | null = null
-  return function (...args: any[]) {
+  return function (this: T, ...args: any[]) {
     if (timeoutID) {
       clearTimeout(timeoutID)
     }

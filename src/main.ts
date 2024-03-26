@@ -4,9 +4,8 @@ import { store, key } from './store/cards'
 import { createApp } from 'vue'
 import App from './App.vue'
 
-const app = createApp(App)
+store.dispatch('fetchItems').then(() => {
+  createApp(App).use(store, key).mount('#app')
+})
 
-// pass the injection key
-app.use(store, key)
-
-app.mount('#app')
+createApp(App).use(store, key).mount('#app')
