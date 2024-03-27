@@ -1,0 +1,5 @@
+export const APP_WRITE_ID = '6602c33c0184843cfe55'
+export const APP_WRITE_ENDPOINT = 'https://cloud.appwrite.io/v1'
+export const APP_WRITE_DB_ID = '6602c67a5840b3446fac'
+export const APP_WRITE_COLLECTION_ITEMS = '6602cbd022527cd594ec'
+export const APP_WRITE_STORAGE_ID = 'sneaker-store-storage'

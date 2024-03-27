@@ -23,7 +23,7 @@ const updateSearch = debounce((value: string) => {
                 <h2 class="text-3xl font-bold">Все кроссовки</h2>
 
                 <div class="flex gap-4">
-                    <select v-model="store.getters['cards/filters'].sortBy"
+                    <select v-model="store.getters.filters.sortBy"
                         class="py-2 px-3 border border-slate-200 rounded-md outline-none" name="" id="">
                         <option value="title">По названию</option>
                         <option value="price">По цене (дешевые)</option>
