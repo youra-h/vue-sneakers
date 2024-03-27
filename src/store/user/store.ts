@@ -21,7 +21,7 @@ const mutations = {
 }
 
 const actions = {
-  async login({ commit }: { commit: Commit }, { email, password }: IAuthData) {
+  async login({ commit }: { commit: Commit }, { email, password }: IAuthData): Promise<boolean> {
     try {
       const user = await account.createEmailPasswordSession(email, password)
 

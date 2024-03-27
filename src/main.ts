@@ -41,7 +41,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 
 async function login(email: string, password: string) {
-  const response = await store.dispatch('user/login', { email, password })
+  const response: boolean = await store.dispatch('user/login', { email, password })
   console.log(response)
 }
 
