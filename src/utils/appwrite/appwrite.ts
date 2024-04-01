@@ -5,7 +5,7 @@ const client = new Client()
 
 client.setEndpoint(APP_WRITE_ENDPOINT).setProject(APP_WRITE_ID)
 
-export const account = new Account(client)
+export const account: Account = new Account(client)
 export { ID } from 'appwrite'
-export const storage = new Storage(client)
-export const db = new Databases(client)
+export const storage: Storage = new Storage(client)
+export const db: Databases = new Databases(client)

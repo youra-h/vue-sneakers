@@ -40,9 +40,37 @@ import { store, key } from './store'
 import { createApp } from 'vue'
 import App from './App.vue'
 
-async function login(email: string, password: string) {
-  const response: boolean = await store.dispatch('user/login', { email, password })
-  console.log(response)
+async function init(): Promise<boolean> {
+  const validateSesssion: boolean = await store.dispatch('session/checkSessionValidity')
+
+  if (!validateSesssion) {
+    const login: boolean = await store.dispatch('session/login', {
+      email: 'test@mail.ru',
+      password: 'testtest'
+    })
+
+    if (!login) {
+      console.error('Failed to login')
+
+      return false
+    }
+  }
+
+  console.log('Session is valid')
+
+  const userInit = await store.dispatch('user/load')
+
+  if (!userInit) {
+    console.error('Failed to load user')
+
+    return false
+  }
+
+  console.log('User loaded')
+
+  createApp(App).use(store, key).mount('#app')
+
+  return true
 }
 
-login('test@mail.ru', 'testtest')
+init()

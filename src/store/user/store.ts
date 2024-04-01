@@ -1,46 +1,40 @@
 import { type Commit } from 'vuex'
-import { type IUser } from './types'
-import { account, type IAuthData } from '@/utils/appwrite'
+import { type TUser } from './types'
+import { account } from '@/utils/appwrite'
 
 export interface TState {
-  user: IUser | null
+  user: TUser | null
 }
 
 const state: TState = {
   user: null
 }
 
-const getters = {
+interface IGetters {
+  user: (state: TState) => TUser | null
+}
+
+const getters: IGetters = {
   user: (state: TState) => state.user
 }
 
 const mutations = {
-  setUser(state: TState, user: IUser) {
+  setUser(state: TState, user: TUser) {
     state.user = user
   }
 }
 
 const actions = {
-  async login({ commit }: { commit: Commit }, { email, password }: IAuthData): Promise<boolean> {
-    try {
-      const user = await account.createEmailPasswordSession(email, password)
+  async load({ commit }: { commit: Commit }) {
+    const user: TUser = await account.get()
 
-      commit('setUser', user)
-
-      return true
-    } catch (error) {
-      console.error(error)
+    if (!user) {
+      return false
     }
-    return false
-  },
-  async logout({ commit }: { commit: Commit }) {
-    try {
-      await account.deleteSession('current')
 
-      commit('setUser', null)
-    } catch (error) {
-      console.error(error)
-    }
+    commit('setUser', user)
+
+    return true
   }
 }
 
