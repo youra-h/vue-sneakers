@@ -2,6 +2,7 @@ import { type InjectionKey } from 'vue'
 import { createStore, useStore as baseUseStore, Store, createLogger } from 'vuex'
 import UserStore, { type TState as TUserState } from './user/store'
 import SessionStore, { type TState as TSessionState } from './session/store'
+import CardStore, { type TState as TCardState } from './card/store'
 
 const debug = true //process.env.NODE_ENV !== 'production'
 
@@ -9,6 +10,7 @@ const debug = true //process.env.NODE_ENV !== 'production'
 export interface TState {
   UserStore: TUserState
   SessionStore: TSessionState
+  CardStore: TCardState
 }
 
 // define injection key
@@ -27,7 +29,8 @@ export const key: InjectionKey<Store<TState>> = Symbol()
 export const store = createStore<TState>({
   modules: {
     user: UserStore,
-    session: SessionStore
+    session: SessionStore,
+    card: CardStore
   },
   strict: debug,
   plugins: debug ? [createLogger()] : []

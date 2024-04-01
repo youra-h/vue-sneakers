@@ -10,7 +10,7 @@ const state: TState = {
   user: null
 }
 
-interface IGetters {
+export interface IGetters {
   user: (state: TState) => TUser | null
 }
 

@@ -1,4 +1,4 @@
-import { type Commit, type Dispatch, type State } from 'vuex'
+import { type Commit, type Dispatch } from 'vuex'
 import { type TSession } from './types'
 import { type Models } from 'appwrite'
 import { account, type IAuthData } from '@/utils/appwrite'
@@ -11,7 +11,7 @@ const state: TState = {
   session: null
 }
 
-interface IGetters {
+export interface IGetters {
   session: (state: TState) => TSession | null
 }
 
@@ -27,7 +27,7 @@ const mutations = {
 
 const actions = {
   getSession({ commit, getters }: { commit: Commit; getters: IGetters }) {
-    const session = localStorage.getItem('session')
+    const session: string | null = localStorage.getItem('session')
 
     if (session) {
       commit('setSession', JSON.parse(session))
