@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, defineModel } from 'vue'
 import Spinner from '@/components/Spinner/Spinner.vue'
 import Header from '@/components/Header/Header.vue'
 import CardList from '@/components/Card/CardList.vue'
@@ -7,12 +7,23 @@ import CardList from '@/components/Card/CardList.vue'
 import { debounce } from './types'
 import { store } from '@/store'
 
-
-// const updateSearch = debounce((value: string) => {
-//     store.dispatch('cards/updateSearch', value)
-// }, 500)
-
 const loaded = ref<boolean>(false)
+
+const selectedSortBy = defineModel<string, string>('sortBy', {
+    get: () => store.getters['card/filters'].sortBy,
+    set: (value: string) => {
+        store.commit('card/setSortBy', value)
+        store.dispatch('card/fetchItems')
+    }
+})
+
+const search = defineModel<string, string>('search', {
+    get: () => store.getters['card/filters'].search,
+    set: (value: string) => {
+        store.commit('card/setSearch', value)
+        debounce(() => store.dispatch('card/fetchItems'), 1000)
+    }
+})
 
 onMounted(async () => {
     const validateSesssion: boolean = await store.dispatch('session/checkSessionValidity')
@@ -53,7 +64,6 @@ onMounted(async () => {
 
 <template>
     <div>
-
         <!-- <Drawer /> -->
         <transition name="fade" mode="out-in">
             <div v-if="!loaded" class="flex h-screen items-center justify-center">
@@ -67,7 +77,7 @@ onMounted(async () => {
                         <h2 class="text-3xl font-bold">Все кроссовки</h2>
 
                         <div class="flex gap-4">
-                            <select v-model="store.getters['card/filters'].sortBy"
+                            <select v-model="selectedSortBy"
                                 class="py-2 px-3 border border-slate-200 rounded-md outline-none" name="" id="">
                                 <option value="title">По названию</option>
                                 <option value="price">По цене (дешевые)</option>
@@ -76,8 +86,7 @@ onMounted(async () => {
 
                             <div class="relative">
                                 <img class="absolute left-3 top-3" src="/search.svg" alt="Search">
-                                <input type="text" @input="updateSearch(($event.target as HTMLInputElement)?.value)"
-                                    placeholder="Поиск..."
+                                <input type="text" v-model="search" placeholder="Поиск..."
                                     class="border border-slate-200 rounded-md py-2 pl-10 pr-4 outline-none focus:border-slate-400" />
                             </div>
                         </div>
