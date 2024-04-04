@@ -1,3 +1,9 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { store } from '@/store'
+
+const user = ref<string>(store.getters['user/user'].email)
+</script>
 <template>
     <header class="flex justify-between border-b border-slate-200 px-10 py-8">
 
@@ -20,7 +26,7 @@
             </li>
             <li class="flex items-center gap-3 cursor-pointer hover:text-black">
                 <img src="/profile.svg" alt="Cart">
-                <span>Профиль</span>
+                <span>{{ user }}</span>
             </li>
         </ul>
 
