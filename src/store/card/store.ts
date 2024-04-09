@@ -37,6 +37,13 @@ const mutations = {
     },
     setSearch(state: TState, search: string) {
         state.filters.search = search
+    },
+    setItem(state: TState, item: IItem) {
+        const index = state.items.findIndex((i) => i.$id === item.$id)
+
+        if (index !== -1) {
+            state.items[index] = item
+        }
     }
 }
 
@@ -65,6 +72,19 @@ const actions = {
         watch(state.filters, () => {
             dispatch('fetchItems')
         })
+    },
+    async toggleFavorite({ commit }: { commit: Commit }, item: IItem) {
+        const favorite = !item.favorite
+
+        try {
+            await db.updateDocument(APP_WRITE_DB_ID, APP_WRITE_COLLECTION_ITEMS, item.$id, {
+                favorite
+            })
+
+            commit('setItem', { ...item, favorite })
+        } catch (error) {
+            console.error(error)
+        }
     }
 }
 
