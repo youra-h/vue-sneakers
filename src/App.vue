@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, onMounted, defineModel } from 'vue'
+import { ref, onMounted, defineModel, provide } from 'vue'
 import Spinner from '@/components/Spinner/Spinner.vue'
 import Header from '@/components/Header/Header.vue'
 import CardList from '@/components/Card/CardList.vue'
-// import Drawer from '@/components/Drawer/Drawer.vue'
+import Drawer from '@/components/Drawer/Drawer.vue'
 import { debounce } from './types'
 import { store } from '@/store'
+import { type IDrawerActions } from '@/components/Drawer/types'
 
 const loaded = ref<boolean>(false)
 
@@ -60,16 +61,30 @@ onMounted(async () => {
     loaded.value = true
 })
 
+const drawerState = ref<boolean>(false)
+
+const drawerActions: IDrawerActions = {
+    open: () => {
+        drawerState.value = true
+    },
+    close: () => {
+        drawerState.value = false
+    }
+}
+
+provide('drawerActions', drawerActions)
+
 </script>
 
 <template>
-    <div>
-        <!-- <Drawer /> -->
-        <transition name="fade" mode="out-in">
-            <div v-if="!loaded" class="flex h-screen items-center justify-center">
-                <Spinner size="large" color="#afc188" />
-            </div>
-            <div v-else class="bg-white w-4/5 m-auto rounded-xl shadow-xl mt-14">
+    <transition name="fade" mode="out-in">
+        <div v-if="!loaded" class="flex h-screen items-center justify-center">
+            <Spinner size="large" color="#afc188" />
+        </div>
+        <div v-else>
+            <Drawer v-if="drawerState" />
+
+            <div class="bg-white w-4/5 m-auto rounded-xl shadow-xl mt-14">
                 <Header />
 
                 <div class="p-10">
@@ -98,8 +113,8 @@ onMounted(async () => {
                     </div>
                 </div>
             </div>
-        </transition>
-    </div>
+        </div>
+    </transition>
 </template>
 <style scoped>
 .fade-enter-active,

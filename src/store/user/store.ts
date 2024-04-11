@@ -11,11 +11,13 @@ const state: TState = {
 }
 
 export interface IGetters {
-  user: (state: TState) => TUser | null
+    user: (state: TState) => TUser | null
+    id: (state: TState) => string
 }
 
 const getters: IGetters = {
-  user: (state: TState) => state.user
+    user: (state: TState) => state.user,
+    id: (state: TState) => state.user?.$id!
 }
 
 const mutations = {

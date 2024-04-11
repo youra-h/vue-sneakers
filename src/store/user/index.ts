@@ -1,7 +1,7 @@
 import UserStore, { type TState } from './store'
-import { type IUser } from './types'
+import { type TUser } from './types'
 
-export type { IUser, TState }
+export type { TUser, TState }
 
 export default {
   ...UserStore

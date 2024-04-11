@@ -2,7 +2,7 @@ import { type Commit } from 'vuex'
 import { type TItems, type IItem, type IFilters } from './types'
 import { type Models } from 'appwrite'
 import { db } from '@/utils/appwrite'
-import { APP_WRITE_DB_ID, APP_WRITE_COLLECTION_ITEMS } from '@/utils/appwrite/constants'
+import { APP_WRITE_DB_ID, APP_WRITE_COLLECTION_ITEM } from '@/utils/appwrite/constants'
 import { watch } from 'vue'
 
 export interface TState {
@@ -52,7 +52,7 @@ const actions = {
         try {
             const list: Models.DocumentList<IItem> = await db.listDocuments(
                 APP_WRITE_DB_ID,
-                APP_WRITE_COLLECTION_ITEMS,
+                APP_WRITE_COLLECTION_ITEM,
                 [
                     `orderDesc("${state.filters.sortBy}")`,
                     `startsWith("title", ["${state.filters.search}"])`
@@ -77,7 +77,7 @@ const actions = {
         const favorite = !item.favorite
 
         try {
-            await db.updateDocument(APP_WRITE_DB_ID, APP_WRITE_COLLECTION_ITEMS, item.$id, {
+            await db.updateDocument(APP_WRITE_DB_ID, APP_WRITE_COLLECTION_ITEM, item.$id, {
                 favorite
             })
 

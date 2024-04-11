@@ -1,8 +1,16 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { inject, ref } from 'vue'
 import { store } from '@/store'
+import { type IDrawerActions } from '@/components/Drawer/types'
 
 const user = ref<string>(store.getters['user/user'].email)
+
+const drawerActions = inject<IDrawerActions>('drawerActions')
+
+if (!drawerActions) {
+    throw new Error('No provider for "drawer" found.');
+}
+
 </script>
 <template>
     <header class="flex justify-between border-b border-slate-200 px-10 py-8">
@@ -16,7 +24,7 @@ const user = ref<string>(store.getters['user/user'].email)
         </div>
 
         <ul class="flex items-center gap-10 text-gray-500">
-            <li class="flex items-center gap-3 cursor-pointer hover:text-black">
+            <li class="flex items-center gap-3 cursor-pointer hover:text-black" @click="drawerActions.open()">
                 <img src="/cart.svg" alt="Cart">
                 <b>1205руб.</b>
             </li>
