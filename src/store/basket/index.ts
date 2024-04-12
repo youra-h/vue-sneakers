@@ -1,7 +1,8 @@
 import BasketStore, { type TState } from './store'
-import { type IBasket, type TBaskets, type IBasketInput } from './types'
+import type { IBasket, IBasketInput, IBasketList } from './types'
+import type { Basket, Baskets } from './classes'
 
-export type { IBasket, TBaskets, TState, IBasketInput }
+export type { TState, IBasket, IBasketInput, IBasketList, Basket, Baskets }
 
 export default {
     ...BasketStore

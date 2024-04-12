@@ -58,6 +58,10 @@ onMounted(async () => {
 
     console.log('Cards loaded');
 
+    await store.dispatch('basket/fetchBaskets')
+
+    console.log('Basket loaded');
+
     loaded.value = true
 })
 

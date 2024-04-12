@@ -2,7 +2,6 @@
 import { defineProps } from 'vue'
 import { type IItem } from '@/store/card/types'
 import { store } from '@/store'
-import { type IBasketInput } from '@/store/basket';
 
 interface IProps {
     item: IItem
@@ -11,13 +10,7 @@ interface IProps {
 const props = defineProps<IProps>()
 
 const addBasket = () => {
-    console.log(store.getters['user/id']);
-    const itemBasket: IBasketInput = {
-        item: props.item.$id,
-        user_id: store.getters['user/id'],
-    }
-
-    store.dispatch('basket/add', itemBasket)
+    store.dispatch('basket/add', props.item)
 }
 </script>
 

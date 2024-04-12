@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { inject, ref } from 'vue'
+import { inject, ref, computed } from 'vue'
 import { store } from '@/store'
 import { type IDrawerActions } from '@/components/Drawer/types'
 
 const user = ref<string>(store.getters['user/user'].email)
+const totalPrice = computed<number>(() => store.getters['basket/items'].totalPrice())
 
 const drawerActions = inject<IDrawerActions>('drawerActions')
 
@@ -26,7 +27,7 @@ if (!drawerActions) {
         <ul class="flex items-center gap-10 text-gray-500">
             <li class="flex items-center gap-3 cursor-pointer hover:text-black" @click="drawerActions.open()">
                 <img src="/cart.svg" alt="Cart">
-                <b>1205руб.</b>
+                <b>{{ totalPrice }}руб.</b>
             </li>
             <li class="flex items-center gap-3 cursor-pointer hover:text-black">
                 <img src="/heart.svg" alt="Cart">

@@ -13,6 +13,6 @@ defineProps<IProps>()
 
 <template>
     <div class="grid grid-cols-4 gap-5">
-        <Card v-for="item in items" :item="item" />
+        <Card v-for="item in items" :item="item" :key="item.$id" />
     </div>
 </template>

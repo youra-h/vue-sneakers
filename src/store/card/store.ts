@@ -21,11 +21,13 @@ const state: TState = {
 export interface IGetters {
     items: (state: TState) => TItems
     filters: (state: TState) => IFilters
+    getItemById: (state: TState) => (id: string) => IItem | undefined
 }
 
 const getters: IGetters = {
     items: (state: TState) => state.items,
-    filters: (state: TState) => state.filters
+    filters: (state: TState) => state.filters,
+    getItemById: (state: TState) => (id: string) => state.items.find((item) => item.$id === id)
 }
 
 const mutations = {

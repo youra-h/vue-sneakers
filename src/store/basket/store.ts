@@ -1,34 +1,47 @@
-import { type Commit } from 'vuex'
-import { type IBasket, type TBaskets, type IBasketInput } from './types'
+import { type Commit, type Getters } from 'vuex'
 import { type Models, ID } from 'appwrite'
 import { db } from '@/utils/appwrite'
 import { APP_WRITE_DB_ID, APP_WRITE_COLLECTION_BASKET } from '@/utils/appwrite/constants'
 import { store } from '@/store'
-import { type TUser } from '@/store/user/types'
+import { type TUser } from '@/store/user'
+import { type IItem } from '@/store/card'
 import { type IState as IStoreState } from '@/store/types'
+import { Baskets, Basket } from './classes'
+import type { IBasket, IBasketInput, IBasketList } from './types'
 
 export interface TState {
-    items: TBaskets
+    items: Baskets
 }
 
 const state: TState = {
-    items: {
-        list: [],
-        count: 0
-    }
+    items: new Baskets()
 }
 
 export interface IGetters {
-    items: (state: TState) => TBaskets
+    items: (state: TState) => Baskets
+    documents: (state: TState) => IBasket[]
 }
 
 const getters: IGetters = {
-    items: (state: TState) => state.items
+    items: (state: TState) => state.items,
+    documents: (state: TState) => state.items.documents
 }
 
 const mutations = {
-    setItems(state: TState, items: TBaskets) {
-        state.items = items
+    setItems(state: TState, items: IBasketList) {
+        state.items.setData(items)
+    },
+    addItem(state: TState, item: IBasket) {
+        state.items.add(item)
+    },
+    remove(state: TState, item: IBasket) {
+        state.items.remove(item)
+    },
+    incItem(state: TState, item: IBasket) {
+        item.inc()
+    },
+    decItem(state: TState, item: IBasket) {
+        state.items.dec(item)
     }
 }
 
@@ -38,7 +51,6 @@ const actions = {
         rootState
     }: {
         commit: Commit
-        state: TState
         rootState: IStoreState
     }): Promise<IBasket[]> {
         try {
@@ -50,7 +62,7 @@ const actions = {
                 [`equal("user_id", "${user.$id}")`]
             )
 
-            commit('setItems', list.documents)
+            commit('setItems', list)
 
             return list.documents
         } catch (error) {
@@ -59,31 +71,74 @@ const actions = {
 
         return []
     },
-    async add({ commit }: { commit: Commit }, item: IBasketInput) {
+    async add(
+        {
+            commit,
+            rootState,
+            getters
+        }: { commit: Commit; rootState: IStoreState; getters: Getters },
+        item: IItem
+    ): Promise<boolean> {
         try {
-            const documentId: string = ID.unique()
+            const user: TUser = rootState.user.user!
+            // const item = store.getters['card/getItemById'](itemId) as IItem
+            const basket: Basket = getters.items.getBasketByItemId(item.$id)
 
-            const document: IBasket = await db.createDocument(
-                APP_WRITE_DB_ID,
-                APP_WRITE_COLLECTION_BASKET,
-                documentId,
-                item
-            )
+            const input: IBasketInput = basket ? basket.getInput() : Basket.getInput(item, user.$id)
 
-            // commit('setItems', [...state.items, document])
+            let document = basket
+                ? await db.getDocument(APP_WRITE_DB_ID, APP_WRITE_COLLECTION_BASKET, basket.$id)
+                : null
 
-            // return document
+            input.count++
+
+            if (document) {
+                await db.updateDocument(
+                    APP_WRITE_DB_ID,
+                    APP_WRITE_COLLECTION_BASKET,
+                    basket.$id,
+                    input
+                )
+
+                commit('incItem', basket)
+            } else {
+                document = await db.createDocument(
+                    APP_WRITE_DB_ID,
+                    APP_WRITE_COLLECTION_BASKET,
+                    ID.unique(),
+                    input
+                )
+
+                document.count--
+
+                commit('addItem', document as IBasket)
+            }
+
+            return true
         } catch (error) {
             console.error(error)
         }
 
-        return null
+        return false
     },
-    async remove({ commit }: { commit: Commit }, item: IBasket) {
+    async remove({ commit }: { commit: Commit }, item: Basket) {
         try {
-            await db.deleteDocument(APP_WRITE_DB_ID, APP_WRITE_COLLECTION_BASKET, item.$id)
+            const input = item.getInput()
 
-            // commit('setItems', state.items.filter((i: IBasket) => i.$id !== item.$id))
+            input.count--
+
+            if (input.count === 0) {
+                await db.deleteDocument(APP_WRITE_DB_ID, APP_WRITE_COLLECTION_BASKET, item.$id)
+            } else {
+                await db.updateDocument(
+                    APP_WRITE_DB_ID,
+                    APP_WRITE_COLLECTION_BASKET,
+                    item.$id,
+                    input
+                )
+            }
+
+            commit('decItem', item)
         } catch (error) {
             console.error(error)
         }
