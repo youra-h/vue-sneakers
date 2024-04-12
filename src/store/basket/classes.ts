@@ -103,7 +103,6 @@ export class Baskets implements IBasketList {
     }
 
     totalPrice(): number {
-        console.log('qwe')
         return this.documents
             .map((item: IBasket) => item.item.price * item.count)
             .reduce((sum: number, current: number) => sum + current, 0)
