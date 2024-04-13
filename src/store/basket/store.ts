@@ -38,7 +38,7 @@ const mutations = {
         state.items.remove(item)
     },
     incItem(state: TState, item: IBasket) {
-        item.inc()
+        state.items.inc(item)
     },
     decItem(state: TState, item: IBasket) {
         state.items.dec(item)
@@ -121,11 +121,18 @@ const actions = {
 
         return false
     },
-    async remove({ commit }: { commit: Commit }, item: Basket) {
+    async remove(
+        { commit }: { commit: Commit },
+        { item, dec = false }: { item: Basket; dec?: boolean }
+    ): Promise<void> {
         try {
-            const input = item.getInput()
+            const input: IBasketInput = item.getInput()
 
-            input.count--
+            if (dec) {
+                input.count--
+            } else {
+                input.count = 0
+            }
 
             if (input.count === 0) {
                 await db.deleteDocument(APP_WRITE_DB_ID, APP_WRITE_COLLECTION_BASKET, item.$id)
@@ -138,7 +145,11 @@ const actions = {
                 )
             }
 
-            commit('decItem', item)
+            if (dec) {
+                commit('decItem', item)
+            } else {
+                commit('remove', item)
+            }
         } catch (error) {
             console.error(error)
         }

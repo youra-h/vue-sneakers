@@ -1,7 +1,12 @@
-<script setup>
+<script setup lang="ts">
 import Layer from '@/components/Layer/Layer.vue';
 import DrawerHeader from './DrawerHeader.vue';
 import CartItemList from '@/components/CartItem/CartItemList.vue';
+import { computed } from 'vue'
+import { store } from '@/store'
+
+const totalPrice = computed < number > (() => store.getters['basket/items'].totalPrice())
+const tax = computed < number > (() => totalPrice.value * 0.05)
 </script>
 
 <template>
@@ -16,13 +21,13 @@ import CartItemList from '@/components/CartItem/CartItemList.vue';
             <div class="flex gap-2">
                 <span>Итого:</span>
                 <div class="flex-1 border-b border-dashed"></div>
-                <b>12900 руб.</b>
+                <b>{{ totalPrice }} руб.</b>
             </div>
 
             <div class="flex gap-2">
                 <span>Налог 5%:</span>
                 <div class="flex-1 border-b border-dashed"></div>
-                <b>900 руб.</b>
+                <b>{{ tax.toFixed(2) }} руб.</b>
             </div>
 
             <button disabled

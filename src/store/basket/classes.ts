@@ -63,6 +63,10 @@ export class Baskets implements IBasketList {
         return this.documents
     }
 
+    getBasketById(id: string): IBasket | undefined {
+        return this.documents.find((item) => item.$id === id)
+    }
+
     getBasketByItemId(id: string): IBasket | undefined {
         return this.documents.find((item) => item.item.$id === id)
     }
@@ -90,8 +94,18 @@ export class Baskets implements IBasketList {
         }
     }
 
+    inc(item: IBasket) {
+        const basket = this.getBasketById(item.$id)
+
+        if (basket) {
+            basket.inc()
+        } else {
+            throw new Error('Not found')
+        }
+    }
+
     dec(item: IBasket) {
-        const basket = this.getBasketByItemId(item.item.$id)
+        const basket = this.getBasketById(item.$id)
 
         if (basket) {
             basket.dec()
@@ -99,6 +113,8 @@ export class Baskets implements IBasketList {
             if (basket.count === 0) {
                 this.remove(basket)
             }
+        } else {
+            throw new Error('Not found')
         }
     }
 
