@@ -1,8 +1,8 @@
 import { type IItem } from '../card'
 import { type Models } from 'appwrite'
-import type { IBasket, IBasketInput, IBasketList } from './types'
+import type { ICart, ICartInput, ICartList } from './types'
 
-export class Basket implements IBasket {
+export class Cart implements ICart {
     $id: string
     $databaseId: string
     $collectionId: string
@@ -13,7 +13,7 @@ export class Basket implements IBasket {
     user_id: string
     count: number = 0
 
-    constructor(data: IBasket) {
+    constructor(data: ICart) {
         this.$id = data.$id
         this.$databaseId = data.$databaseId
         this.$collectionId = data.$collectionId
@@ -33,7 +33,7 @@ export class Basket implements IBasket {
         this.count--
     }
 
-    getInput(): IBasketInput {
+    getInput(): ICartInput {
         return {
             item: this.item.$id,
             user_id: this.user_id,
@@ -41,7 +41,7 @@ export class Basket implements IBasket {
         }
     }
 
-    static getInput(item: IItem, user_id: string, count: number = 0): IBasketInput {
+    static getInput(item: IItem, user_id: string, count: number = 0): ICartInput {
         return {
             item: item.$id,
             user_id,
@@ -50,43 +50,43 @@ export class Basket implements IBasket {
     }
 }
 
-export class Baskets implements IBasketList {
-    documents: IBasket[] = []
+export class Carts implements ICartList {
+    documents: ICart[] = []
     total: number = 0
 
-    setData(data: Models.DocumentList<IBasket>) {
-        this.documents = data.documents.map((item) => new Basket(item))
+    setData(data: Models.DocumentList<ICart>) {
+        this.documents = data.documents.map((item) => new Cart(item))
         this.total = data.total
     }
 
-    getDocuments(): IBasket[] {
+    getDocuments(): ICart[] {
         return this.documents
     }
 
-    getBasketById(id: string): IBasket | undefined {
+    getCartById(id: string): ICart | undefined {
         return this.documents.find((item) => item.$id === id)
     }
 
-    getBasketByItemId(id: string): IBasket | undefined {
+    getCartByItemId(id: string): ICart | undefined {
         return this.documents.find((item) => item.item.$id === id)
     }
 
     hasItem(itemId: string): boolean {
-        return !!this.getBasketByItemId(itemId)
+        return !!this.getCartByItemId(itemId)
     }
 
-    add(item: IBasket) {
-        let basket = this.getBasketByItemId(item.item.$id)
+    add(item: ICart) {
+        let cart = this.getCartByItemId(item.item.$id)
 
-        if (!basket) {
-            basket = new Basket(item)
-            this.documents.push(basket)
+        if (!cart) {
+            cart = new Cart(item)
+            this.documents.push(cart)
         }
 
-        basket.inc()
+        cart.inc()
     }
 
-    remove(item: IBasket) {
+    remove(item: ICart) {
         const index: number = this.documents.indexOf(item)
 
         if (index >= 0) {
@@ -94,24 +94,24 @@ export class Baskets implements IBasketList {
         }
     }
 
-    inc(item: IBasket) {
-        const basket = this.getBasketById(item.$id)
+    inc(item: ICart) {
+        const cart = this.getCartById(item.$id)
 
-        if (basket) {
-            basket.inc()
+        if (cart) {
+            cart.inc()
         } else {
             throw new Error('Not found')
         }
     }
 
-    dec(item: IBasket) {
-        const basket = this.getBasketById(item.$id)
+    dec(item: ICart) {
+        const cart = this.getCartById(item.$id)
 
-        if (basket) {
-            basket.dec()
+        if (cart) {
+            cart.dec()
 
-            if (basket.count === 0) {
-                this.remove(basket)
+            if (cart.count === 0) {
+                this.remove(cart)
             }
         } else {
             throw new Error('Not found')
@@ -120,7 +120,7 @@ export class Baskets implements IBasketList {
 
     totalPrice(): number {
         return this.documents
-            .map((item: IBasket) => item.item.price * item.count)
+            .map((item: ICart) => item.item.price * item.count)
             .reduce((sum: number, current: number) => sum + current, 0)
     }
 }

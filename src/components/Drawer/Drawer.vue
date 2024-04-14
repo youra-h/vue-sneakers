@@ -5,7 +5,7 @@ import CartItemList from '@/components/CartItem/CartItemList.vue';
 import { computed } from 'vue'
 import { store } from '@/store'
 
-const totalPrice = computed < number > (() => store.getters['basket/items'].totalPrice())
+const totalPrice = computed<number>(() => store.getters['cart/items'].totalPrice())
 const tax = computed < number > (() => totalPrice.value * 0.05)
 </script>
 

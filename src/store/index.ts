@@ -4,7 +4,7 @@ import { type IState } from './types'
 import UserStore from './user/store'
 import SessionStore from './session/store'
 import CardStore from './card/store'
-import BasketStore from './basket/store'
+import CartStore from './cart/store'
 
 const debug = true //process.env.NODE_ENV !== 'production'
 
@@ -16,7 +16,7 @@ export const store = createStore<IState>({
         user: UserStore,
         session: SessionStore,
         card: CardStore,
-        basket: BasketStore
+        cart: CartStore
     },
     strict: debug,
     plugins: debug ? [createLogger()] : []

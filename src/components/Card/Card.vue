@@ -9,8 +9,8 @@ interface IProps {
 
 const props = defineProps<IProps>()
 
-const addBasket = () => {
-    store.dispatch('basket/add', props.item)
+const addCart = () => {
+    store.dispatch('cart/add', props.item)
 }
 </script>
 
@@ -31,7 +31,7 @@ const addBasket = () => {
                 <b>{{ item.price }} руб</b>
             </div>
 
-            <img @click="addBasket" src="/plus.svg" alt="Plus"
+            <img @click="addCart" src="/plus.svg" alt="Plus"
                 class="cursor-pointer opacity-50 transition hover:opacity-100">
         </div>
     </div>

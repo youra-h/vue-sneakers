@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { defineProps } from 'vue'
-import type { IBasket } from '@/store/basket';
+import type { ICart } from '@/store/cart';
 import { store } from '@/store'
 
 interface IProps {
-    item: IBasket
+    item: ICart
 }
 
 defineProps<IProps>()
@@ -26,13 +26,13 @@ defineProps<IProps>()
         </div>
         <div class="flex justify-between mt-3">
             <div class="flex justify-between items-center basis-24">
-                <button @click="store.dispatch('basket/add', item.item)"
+                <button @click="store.dispatch('cart/add', item.item)"
                     class="border border-slate-300 w-7 h-full rounded-md transition opacity-40 hover:opacity-100">+</button>
                 <b>{{ item.count }}</b>
-                <button @click="store.dispatch('basket/remove', { item, dec: true })"
+                <button @click="store.dispatch('cart/remove', { item, dec: true })"
                     class="border border-slate-300 w-7 h-full rounded-md transition opacity-40 hover:opacity-100">-</button>
             </div>
-            <img @click="store.dispatch('basket/remove', item)"
+            <img @click="store.dispatch('cart/remove', item)"
                 class="opacity-40 hover:opacity-100 transition cursor-pointer" src="/close.svg" alt="Remove" />
         </div>
     </div>

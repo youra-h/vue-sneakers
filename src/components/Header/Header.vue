@@ -4,7 +4,7 @@ import { store } from '@/store'
 import { type IDrawerActions } from '@/components/Drawer/types'
 
 const user = ref<string>(store.getters['user/user'].email)
-const totalPrice = computed<number>(() => store.getters['basket/items'].totalPrice())
+const totalPrice = computed<number>(() => store.getters['cart/items'].totalPrice())
 
 const drawerActions = inject<IDrawerActions>('drawerActions')
 

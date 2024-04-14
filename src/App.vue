@@ -58,9 +58,9 @@ onMounted(async () => {
 
     console.log('Cards loaded');
 
-    await store.dispatch('basket/fetchBaskets')
+    await store.dispatch('cart/fetchCarts')
 
-    console.log('Basket loaded');
+    console.log('Cart loaded');
 
     loaded.value = true
 })
