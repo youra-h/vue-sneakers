@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
-import { type TItems } from './types'
+import { type TItems } from '@/store/card'
 import Card from './Card.vue'
 
 interface IProps {
