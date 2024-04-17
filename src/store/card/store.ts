@@ -52,13 +52,23 @@ const mutations = {
 const actions = {
     async fetchItems({ commit, state }: { commit: Commit; state: TState }) {
         try {
+            const filters: string[] = []
+
+            if (state.filters.sortBy) {
+                const order: string =
+                    state.filters.sortBy.indexOf('-') === 0 ? 'orderDesc' : 'orderAsc'
+                const field: string = state.filters.sortBy.replace('-', '')
+                filters.push(`${order}("${field}")`)
+            }
+
+            if (state.filters.search) {
+                filters.push(`search("title", ["${state.filters.search}"])`)
+            }
+
             const list: Models.DocumentList<IItem> = await db.listDocuments(
                 APP_WRITE_DB_ID,
                 APP_WRITE_COLLECTION_ITEM,
-                [
-                    `orderDesc("${state.filters.sortBy}")`,
-                    `startsWith("title", ["${state.filters.search}"])`
-                ]
+                filters
             )
 
             commit('setItems', list.documents)
