@@ -22,12 +22,14 @@ export interface IGetters {
     items: (state: TState) => TItems
     filters: (state: TState) => IFilters
     getItemById: (state: TState) => (id: string) => IItem | undefined
+    favorites: (state: TState) => TItems
 }
 
 const getters: IGetters = {
     items: (state: TState) => state.items,
     filters: (state: TState) => state.filters,
-    getItemById: (state: TState) => (id: string) => state.items.find((item) => item.$id === id)
+    getItemById: (state: TState) => (id: string) => state.items.find((item) => item.$id === id),
+    favorites: (state: TState) => state.items.filter((item) => item.favorite)
 }
 
 const mutations = {
