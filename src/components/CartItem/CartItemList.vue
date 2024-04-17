@@ -9,7 +9,7 @@ const items = ref<ICart[]>(store.getters['cart/items'].documents)
 </script>
 
 <template>
-    <div class="flex flex-col gap-4 flex-1">
+    <div class="flex flex-col gap-4 flex-grow" v-auto-animate>
         <CartItem v-for="item in items" :item="item" :key="item.$id" />
     </div>
 </template>

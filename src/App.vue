@@ -22,7 +22,7 @@ const search = defineModel<string, string>('search', {
     get: () => store.getters['card/filters'].search,
     set: (value: string) => {
         store.commit('card/setSearch', value)
-        debounce(() => store.dispatch('card/fetchItems'), 1000)
+        debounce(() => store.dispatch('card/fetchItems'), 500)
     }
 })
 
