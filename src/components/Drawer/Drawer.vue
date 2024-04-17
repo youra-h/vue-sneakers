@@ -2,11 +2,30 @@
 import Layer from '@/components/Layer/Layer.vue';
 import DrawerHeader from './DrawerHeader.vue';
 import CartItemList from '@/components/CartItem/CartItemList.vue';
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { store } from '@/store'
 
+let isSendingOrders = ref<boolean>(false)
+
+const send = async () => {
+    isSendingOrders.value = true
+
+    try {
+        if (await store.dispatch('cart/send')) {
+            console.log('send orders');
+            alert('send orders');
+        }
+    } catch (error) {
+        console.log(error);
+    } finally {
+        isSendingOrders.value = false
+    }
+}
+
 const totalPrice = computed<number>(() => store.getters['cart/items'].totalPrice())
-const tax = computed < number > (() => totalPrice.value * 0.05)
+const tax = computed<number>(() => totalPrice.value * 0.05)
+const disabled = computed<boolean>(() => !store.getters['cart/items'].is() || isSendingOrders.value)
+
 </script>
 
 <template>
@@ -30,7 +49,7 @@ const tax = computed < number > (() => totalPrice.value * 0.05)
                 <b>{{ tax.toFixed(2) }} руб.</b>
             </div>
 
-            <button disabled
+            <button :disabled="disabled" @click="send"
                 class="bg-lime-500 w-full rounded-xl py-3 mt-4 text-white hover:bg-lime-600 transition active:bg-lime-700 disabled:bg-slate-300 cursor-pointer">
                 Оформить заказ
             </button>

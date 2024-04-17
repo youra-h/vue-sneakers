@@ -75,6 +75,10 @@ export class Carts implements ICartList {
         return !!this.getCartByItemId(itemId)
     }
 
+    is(): boolean {
+        return this.documents.length > 0
+    }
+
     add(item: ICart) {
         let cart = this.getCartByItemId(item.item.$id)
 
@@ -122,5 +126,10 @@ export class Carts implements ICartList {
         return this.documents
             .map((item: ICart) => item.item.price * item.count)
             .reduce((sum: number, current: number) => sum + current, 0)
+    }
+
+    clear(): void {
+        this.documents.splice(0, this.documents.length)
+        this.total = 0
     }
 }

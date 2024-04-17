@@ -41,6 +41,9 @@ const mutations = {
     },
     decItem(state: TState, item: ICart) {
         state.items.dec(item)
+    },
+    clear(state: TState) {
+        state.items.clear()
     }
 }
 
@@ -152,6 +155,19 @@ const actions = {
         } catch (error) {
             console.error(error)
         }
+    },
+    async send({ commit, getters }: { commit: Commit; getters: Getters }): Promise<boolean> {
+        return new Promise<boolean>((resolve) => {
+            setTimeout(async () => {
+                for (const item of getters.items.documents) {
+                    await db.deleteDocument(APP_WRITE_DB_ID, APP_WRITE_COLLECTION_BASKET, item.$id)
+                }
+
+                commit('clear')
+
+                resolve(true)
+            }, 1000)
+        })
     }
 }
 
