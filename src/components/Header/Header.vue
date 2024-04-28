@@ -42,9 +42,14 @@ const logout = async () => {
                 <img src="/heart.svg" alt="Cart">
                 <span>Закладки</span>
             </router-link>
-            <li @click="logout" class="flex items-center gap-3 cursor-pointer hover:text-black">
-                <img src="/profile.svg" alt="Cart">
-                <span>{{ user?.email }}</span>
+            <li class="flex items-center gap-3 cursor-pointer hover:text-black">
+                <img src="/profile.svg" alt="user">
+                <span v-if="user?.$id" @click="logout">
+                    {{ user?.email }}
+                </span>
+                <router-link v-else :to="{ name: 'login' }">
+                    <span>Войти</span>
+                </router-link>
             </li>
         </ul>
 
