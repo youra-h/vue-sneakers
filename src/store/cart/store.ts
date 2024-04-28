@@ -1,5 +1,5 @@
 import { type Commit, type Getters } from 'vuex'
-import { type Models, ID } from 'appwrite'
+import { type Models, ID, Query } from 'appwrite'
 import { db } from '@/utils/appwrite'
 import { APP_WRITE_DB_ID, APP_WRITE_COLLECTION_BASKET } from '@/utils/appwrite/constants'
 import { type TUser } from '@/store/user'
@@ -58,10 +58,12 @@ const actions = {
         try {
             const user: TUser = rootState.user.user!
 
+            const search: string = Query.equal('user_id', user.$id)
+
             const list: Models.DocumentList<ICart> = await db.listDocuments(
                 APP_WRITE_DB_ID,
                 APP_WRITE_COLLECTION_BASKET,
-                [`equal("user_id", "${user.$id}")`]
+                [search]
             )
 
             commit('setItems', list)

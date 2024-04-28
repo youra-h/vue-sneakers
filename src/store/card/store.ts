@@ -1,6 +1,6 @@
 import { type Commit } from 'vuex'
 import { type TItems, type IItem, type IFilters } from './types'
-import { type Models } from 'appwrite'
+import { type Models, Query } from 'appwrite'
 import { db } from '@/utils/appwrite'
 import { APP_WRITE_DB_ID, APP_WRITE_COLLECTION_ITEM } from '@/utils/appwrite/constants'
 import { watch } from 'vue'
@@ -57,14 +57,19 @@ const actions = {
             const filters: string[] = []
 
             if (state.filters.sortBy) {
-                const order: string =
-                    state.filters.sortBy.indexOf('-') === 0 ? 'orderDesc' : 'orderAsc'
                 const field: string = state.filters.sortBy.replace('-', '')
-                filters.push(`${order}("${field}")`)
+
+                const order =
+                    state.filters.sortBy.indexOf('-') === 0
+                        ? Query.orderDesc(field)
+                        : Query.orderAsc(field)
+
+                filters.push(order)
             }
 
             if (state.filters.search) {
-                filters.push(`search("title", ["${state.filters.search}"])`)
+                const search: string = Query.search('title', state.filters.search)
+                filters.push(search)
             }
 
             const list: Models.DocumentList<IItem> = await db.listDocuments(

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw, Router } from 'vue-router'
 
 import Home from '@/pages/Home.vue'
+import Login from '@/pages/Login.vue'
 import Favorites from '@/pages/Favorites.vue'
 
 const routes: RouteRecordRaw[] = [
