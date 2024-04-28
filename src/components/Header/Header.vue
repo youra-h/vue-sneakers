@@ -1,15 +1,22 @@
 <script setup lang="ts">
-import { inject, ref, computed } from 'vue'
+import { inject, computed } from 'vue'
 import { store } from '@/store'
 import { type IDrawerActions } from '@/components/Drawer/types'
+import type { TUser } from '@/store/user';
 
-const user = ref<string>(store.getters['user/user'].email)
+const user = computed<TUser | null>(() => store.getters['user/user'])
 const totalPrice = computed<number>(() => store.getters['cart/items'].totalPrice())
 
 const drawerActions = inject<IDrawerActions>('drawerActions')
 
 if (!drawerActions) {
     throw new Error('No provider for "drawer" found.');
+}
+
+const logout = async () => {
+    await store.dispatch('session/logout')
+    await store.dispatch('user/logout')
+    await store.dispatch('cart/clear')
 }
 
 </script>
@@ -35,9 +42,9 @@ if (!drawerActions) {
                 <img src="/heart.svg" alt="Cart">
                 <span>Закладки</span>
             </router-link>
-            <li class="flex items-center gap-3 cursor-pointer hover:text-black">
+            <li @click="logout" class="flex items-center gap-3 cursor-pointer hover:text-black">
                 <img src="/profile.svg" alt="Cart">
-                <span>{{ user }}</span>
+                <span>{{ user?.email }}</span>
             </li>
         </ul>
 

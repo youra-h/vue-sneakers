@@ -1,13 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted, provide } from 'vue'
-import Spinner from '@/components/Spinner/Spinner.vue'
-import Header from '@/components/Header/Header.vue'
-import Drawer from '@/components/Drawer/Drawer.vue'
+import { onMounted, computed, type ComputedRef } from 'vue'
+import { useRoute } from 'vue-router'
 import { store } from '@/store'
-import { type IDrawerActions } from '@/components/Drawer/types'
-import Home from '@/pages/Home.vue'
 
-const loaded = ref<boolean>(false)
+import DefaultLayout from '@/layouts/DefaultLayout.vue'
+import AuthLayout from '@/layouts/AuthLayout.vue'
 
 onMounted(async () => {
     const validateSesssion: boolean = await store.dispatch('session/checkSessionValidity')
@@ -37,58 +34,34 @@ onMounted(async () => {
 
     console.log('User loaded')
 
-    await store.dispatch('card/fetchItems')
-
-    console.log('Cards loaded');
-
     await store.dispatch('cart/fetchCarts')
 
     console.log('Cart loaded');
-
-    loaded.value = true
 })
 
-const drawerState = ref<boolean>(false)
+const route = useRoute()
 
-const drawerActions: IDrawerActions = {
-    open: () => {
-        drawerState.value = true
-    },
-    close: () => {
-        drawerState.value = false
-    }
+type TLayouts = {
+    default: typeof DefaultLayout
+    auth: typeof AuthLayout
 }
 
-provide('drawerActions', drawerActions)
+const layouts: TLayouts = {
+    default: DefaultLayout,
+    auth: AuthLayout
+}
+
+const layout: ComputedRef<typeof DefaultLayout | typeof AuthLayout> = computed(() => {
+    const layoutName: keyof TLayouts = (route.meta.layout as keyof TLayouts) || 'default'
+
+    return layouts[layoutName]
+})
 
 </script>
 
 <template>
-    <transition name="fade" mode="out-in">
-        <div v-if="!loaded" class="flex h-screen items-center justify-center">
-            <Spinner size="large" color="#afc188" />
-        </div>
-        <div v-else>
-            <Drawer v-if="drawerState" />
-
-            <div class="bg-white w-4/5 m-auto rounded-xl shadow-xl mt-14">
-                <Header />
-
-                <div class="p-10">
-                    <router-view></router-view>
-                </div>
-            </div>
-        </div>
-    </transition>
+    <component :is="layout">
+        <router-view></router-view>
+    </component>
 </template>
-<style scoped>
-.fade-enter-active,
-.fade-leave-active {
-    transition: opacity .5s;
-}
 
-.fade-enter,
-.fade-leave-to {
-    opacity: 0;
-}
-</style>

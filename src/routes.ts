@@ -15,6 +15,14 @@ const routes: RouteRecordRaw[] = [
         path: '/favorites',
         name: 'favorites',
         component: Favorites
+    },
+    {
+        path: '/login',
+        name: 'login',
+        component: Login,
+        meta: {
+            layout: 'auth'
+        }
     }
 ]
 

@@ -58,6 +58,8 @@ const actions = {
         try {
             const user: TUser = rootState.user.user!
 
+            if (!user) return []
+
             const search: string = Query.equal('user_id', user.$id)
 
             const list: Models.DocumentList<ICart> = await db.listDocuments(
@@ -170,6 +172,13 @@ const actions = {
                 resolve(true)
             }, 1000)
         })
+    },
+    async clear({ commit }: { commit: Commit }): Promise<void> {
+        try {
+            commit('clear')
+        } catch (error) {
+            console.error(error)
+        }
     }
 }
 

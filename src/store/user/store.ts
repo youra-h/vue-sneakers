@@ -37,6 +37,14 @@ const actions = {
     commit('setUser', user)
 
     return true
+  },
+
+  async logout({ commit }: { commit: Commit }) {
+    try {
+      commit('setUser', null)
+    } catch (error) {
+      console.error(error)
+    }
   }
 }
 
