@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { defineModel, ref } from 'vue'
+import { computed, defineModel, ref } from 'vue'
 import { store } from '@/store'
 import { useRouter } from 'vue-router'
 import { useSnackbar } from "vue3-snackbar"
@@ -13,7 +13,7 @@ const login = defineModel<string>('login')
 const password = defineModel<string>('password')
 
 const isLoading = ref<boolean>(false)
-const error = ref<boolean>(false)
+const hasError = ref<boolean>(false)
 
 const submit = async () => {
     isLoading.value = true
@@ -24,11 +24,15 @@ const submit = async () => {
             password: password.value
         })
 
+        hasError.value = false
+
         await UserDataServices()
 
-        router.back()
-    } catch (error: unknown) {
-        const e = error as AppwriteException
+        router.push({ name: 'home' })
+    } catch (err: unknown) {
+        hasError.value = true
+
+        const e = err as AppwriteException
 
         snackbar.add({
             type: 'error',
@@ -39,6 +43,13 @@ const submit = async () => {
     }
 }
 
+const classInput = computed(() => {
+    return {
+        'border-red-300': hasError.value,
+        'border-slate-200': !hasError.value
+    }
+})
+
 </script>
 
 <template>
@@ -46,15 +57,15 @@ const submit = async () => {
         <form @submit.prevent="submit">
             <div>
                 <input :disabled="isLoading" type="text" v-model="login" placeholder="Введите email..."
-                    class="w-full border border-slate-200 rounded-md py-2 px-2 pr-4 outline-none focus:border-slate-400"
-                    :class="{ 'border-red-300': !error }" />
+                    class="w-full border rounded-md py-2 px-2 pr-4 outline-none focus:border-slate-400"
+                    :class="classInput" />
             </div>
 
 
             <div class="mt-5">
                 <input :disabled="isLoading" type="password" v-model="password" placeholder="Введите пароль..."
-                    class="w-full border border-slate-200 rounded-md py-2 px-2 pr-4 outline-none focus:border-slate-400"
-                    :class="{ 'border-red-300': !error }" />
+                    class="w-full border rounded-md py-2 px-2 pr-4 outline-none focus:border-slate-400"
+                    :class="classInput" />
             </div>
 
             <div class=" mt-5 text-end">
@@ -64,7 +75,8 @@ const submit = async () => {
         </form>
 
         <div class="mt-5 text-end">
-            <router-link to="/register" class="flex-grow text-slate-600 text-sm">Зарегистрироваться</router-link>
+            <router-link :to="{ name: 'register' }"
+                class="flex-grow text-slate-600 text-sm">Зарегистрироваться</router-link>
         </div>
     </div>
 </template>

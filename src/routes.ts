@@ -5,6 +5,7 @@ import type { RouteLocationNormalized, NavigationGuardNext } from 'vue-router'
 
 import Home from '@/pages/Home.vue'
 import Login from '@/pages/Login.vue'
+import Register from '@/pages/Register.vue'
 import Favorites from '@/pages/Favorites.vue'
 import NotFound from '@/pages/NotFound.vue'
 
@@ -28,6 +29,15 @@ const routes: RouteRecordRaw[] = [
         path: '/login',
         name: 'login',
         component: Login,
+        meta: {
+            layout: 'auth',
+            requiresVisitor: true
+        }
+    },
+    {
+        path: '/register',
+        name: 'register',
+        component: Register,
         meta: {
             layout: 'auth',
             requiresVisitor: true

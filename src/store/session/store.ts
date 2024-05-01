@@ -1,6 +1,6 @@
 import { type Commit, type Dispatch } from 'vuex'
 import { type TSession } from './types'
-import { type Models, type AppwriteException } from 'appwrite'
+import { type Models, type AppwriteException, ID } from 'appwrite'
 import { account, type IAuthData } from '@/utils/appwrite'
 
 export interface TState {
@@ -84,6 +84,21 @@ const actions = {
         }
 
         return false
+    },
+
+    async createAccount(context: any, { email, password }: IAuthData): Promise<boolean> {
+        try {
+            await account.create(
+                ID.unique(),
+                email,
+                password
+            )            
+
+            return true
+        } catch (error) {            
+            console.error(error)
+            throw error
+        }
     }
 }
 
