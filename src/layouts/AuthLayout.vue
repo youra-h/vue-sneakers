@@ -21,6 +21,3 @@ const randomImage = computed<string>(() => images[Math.floor(Math.random() * ima
     background-size: auto auto;
 }
 </style>
-
-<input :disabled="isLoading" type="text" v-model="login" placeholder="Введите email..."
-    class="w-full border border-slate-200 border-red-300  rounded-md py-2 px-2 pr-4 outline-none focus:border-slate-400" />
