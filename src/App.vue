@@ -2,41 +2,19 @@
 import { onMounted, computed, type ComputedRef } from 'vue'
 import { useRoute } from 'vue-router'
 import { store } from '@/store'
+import UserDataServices from '@/services/UserDataServices'
 
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 
+import { Vue3Snackbar } from "vue3-snackbar";
+
 onMounted(async () => {
     const validateSesssion: boolean = await store.dispatch('session/checkSessionValidity')
 
-    if (!validateSesssion) {
-        const login: boolean = await store.dispatch('session/login', {
-            email: 'test@mail.ru',
-            password: 'testtest'
-        })
-
-        if (!login) {
-            console.error('Failed to login')
-
-            return false
-        }
+    if (validateSesssion) {
+        await UserDataServices()
     }
-
-    console.log('Session is valid')
-
-    const userInit = await store.dispatch('user/load')
-
-    if (!userInit) {
-        console.error('Failed to load user')
-
-        return false
-    }
-
-    console.log('User loaded')
-
-    await store.dispatch('cart/fetchCarts')
-
-    console.log('Cart loaded');
 })
 
 const route = useRoute()
@@ -63,5 +41,7 @@ const layout: ComputedRef<typeof DefaultLayout | typeof AuthLayout> = computed((
     <component :is="layout">
         <router-view></router-view>
     </component>
+
+    <vue3-snackbar bottom right :duration="6000"></vue3-snackbar>
 </template>
 

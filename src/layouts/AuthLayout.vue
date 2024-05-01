@@ -6,11 +6,11 @@ const randomImage = computed<string>(() => images[Math.floor(Math.random() * ima
 </script>
 
 <template>
-    <div class="grid grid-cols-2 h-screen">
+    <div class="grid lg:grid-cols-2 h-screen">
         <div>
             <slot></slot>
         </div>
-        <div class="bg-slate-700 flex justify-center items-center object-cover"
+        <div class="bg-slate-700 justify-center items-center object-cover hidden lg:flex"
             :style="{ backgroundImage: 'url(' + randomImage + ')' }">
         </div>
     </div>
@@ -18,6 +18,6 @@ const randomImage = computed<string>(() => images[Math.floor(Math.random() * ima
 <style scoped>
 .object-cover {
     background: url('/screensaver3.png') repeat repeat;
-    background-size: 70% 70%;
+    background-size: auto auto;
 }
 </style>

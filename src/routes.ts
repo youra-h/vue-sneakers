@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw, Router } from 'vue-router'
+import { store } from '@/store'
+import type { RouteLocationNormalized, NavigationGuardNext } from 'vue-router'
 
 import Home from '@/pages/Home.vue'
 import Login from '@/pages/Login.vue'
@@ -21,7 +23,8 @@ const routes: RouteRecordRaw[] = [
         name: 'login',
         component: Login,
         meta: {
-            layout: 'auth'
+            layout: 'auth',
+            requiresVisitor: true
         }
     }
 ]
@@ -30,3 +33,23 @@ export const router: Router = createRouter({
     history: createWebHistory(),
     routes
 })
+
+router.beforeEach(
+    async (
+        to: RouteLocationNormalized,
+        from: RouteLocationNormalized,
+        next: NavigationGuardNext
+    ) => {
+        // Check if the route requires authentication
+        if (to.meta.requiresVisitor) {
+            const validateSession: boolean = await store.dispatch('session/checkSessionValidity')
+
+            if (validateSession) {
+                router.back()
+                return
+            }
+        }
+
+        next()
+    }
+)
